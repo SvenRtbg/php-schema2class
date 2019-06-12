@@ -91,6 +91,7 @@ class SchemaToClass
             MixedProperty::class,
         ];
 
+        // @todo references have to be resolved at this point
         foreach ($schema["properties"] as $key => $definition) {
             $isRequired = isset($schema["required"]) && in_array($key, $schema["required"]);
 
@@ -111,6 +112,7 @@ class SchemaToClass
             }
         }
 
+        // @todo infinite loops have to be prevented at this point
         foreach ($propertiesFromSchema as $property) {
             $property->generateSubTypes($this);
         }
