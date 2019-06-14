@@ -15,7 +15,7 @@ class OptionalPropertyDecoratorTest extends TestCase
 
     public function testCanHandleSchema()
     {
-        assertFalse(OptionalPropertyDecorator::canHandleSchema([]));
+        assertFalse(OptionalPropertyDecorator::canHandleSchema((object) []));
     }
 
     protected function setUp()

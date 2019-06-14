@@ -20,17 +20,17 @@ class DatePropertyTest extends TestCase
 
     public function testCanHandleSchema()
     {
-        assertTrue(DateProperty::canHandleSchema(['type' => 'string', 'format' => 'date-time']));
+        assertTrue(DateProperty::canHandleSchema((object) ['type' => 'string', 'format' => 'date-time']));
 
-        assertFalse(DateProperty::canHandleSchema(['type' => 'string']));
-        assertFalse(DateProperty::canHandleSchema(['type' => 'string', 'format' => 'foo']));
+        assertFalse(DateProperty::canHandleSchema((object) ['type' => 'string']));
+        assertFalse(DateProperty::canHandleSchema((object) ['type' => 'string', 'format' => 'foo']));
 
     }
     protected function setUp()
     {
         $this->generatorRequest = $this->prophesize(GeneratorRequest::class);
         $key = 'myPropertyName';
-        $this->underTest = new DateProperty($key, ['type' => 'string', 'format' => 'date-time'], $this->generatorRequest->reveal());
+        $this->underTest = new DateProperty($key, (object) ['type' => 'string', 'format' => 'date-time'], $this->generatorRequest->reveal());
     }
 
     public function testIsComplex()

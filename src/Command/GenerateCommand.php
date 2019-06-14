@@ -5,8 +5,10 @@ use Helmich\Schema2Class\Generator\GeneratorRequest;
 use Helmich\Schema2Class\Generator\NamespaceInferrer;
 use Helmich\Schema2Class\Generator\SchemaToClass;
 use Helmich\Schema2Class\Loader\SchemaLoader;
+use Helmich\Schema2Class\Loader\Yaml\YamlUriRetriever;
 use Helmich\Schema2Class\Writer\DebugWriter;
 use Helmich\Schema2Class\Writer\FileWriter;
+use JsonSchema\SchemaStorage;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -76,6 +78,7 @@ class GenerateCommand extends Command
         }
 
         $this->s2c->setWriter($writer)->setOutput($output);
+        $this->s2c->setSchemaStorage(new SchemaStorage(new YamlUriRetriever())); // @todo this belongs into the loader
 
         $request = new GeneratorRequest($schema, $targetDirectory, $targetNamespace, $input->getOption("class"));
         $request->php5 = $input->getOption("php5");

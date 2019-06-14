@@ -3,17 +3,15 @@ namespace Helmich\Schema2Class\Generator\Property;
 
 class IntegerProperty extends AbstractPropertyInterface
 {
-    use TypeConvert;
-
-    public static function canHandleSchema(array $schema)
+    public static function canHandleSchema($schema)
     {
-        if (!isset($schema["type"])) {
+        if (!isset($schema->type)) {
             return false;
         }
-        return $schema["type"] === "integer"
-            || $schema["type"] === "int"
-            || (isset($schema["format"]) && $schema["type"] === "number" && $schema["format"] === "integer")
-            || (isset($schema["format"]) && $schema["type"] === "number" && $schema["format"] === "int")
+        return $schema->type === "integer"
+            || $schema->type === "int"
+            || (isset($schema->format) && $schema->type === "number" && $schema->format === "integer")
+            || (isset($schema->format) && $schema->type === "number" && $schema->format === "int")
         ;
     }
 

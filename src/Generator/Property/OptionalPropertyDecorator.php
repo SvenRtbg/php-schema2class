@@ -33,10 +33,10 @@ class OptionalPropertyDecorator implements PropertyInterface
     }
 
     /**
-     * @param array $schema
+     * @param object|mixed $schema
      * @return bool
      */
-    public static function canHandleSchema(array $schema)
+    public static function canHandleSchema($schema)
     {
         return false;
     }

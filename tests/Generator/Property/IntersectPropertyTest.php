@@ -17,7 +17,7 @@ class IntersectPropertyTest extends TestCase
 
     public function testCanHandleSchema()
     {
-        assertTrue(IntersectProperty::canHandleSchema(['allOf' => []]));
+        assertTrue(IntersectProperty::canHandleSchema((object) ['allOf' => []]));
 
         assertFalse(IntersectProperty::canHandleSchema([]));
     }
@@ -85,37 +85,37 @@ EOCODE;
     {
         return [
             'empty allOf' => [
-                ['allOf' => []],
-                ['required' => [], 'properties' => []]
+                (object) ['allOf' => []],
+                (object) ['required' => [], 'properties' => (object) []]
             ],
             'required' => [
-                ['allOf' => [['required' => ['foo']], ['required' => ['bar']]]],
-                ['required' => ['foo', 'bar'], 'properties' => []]
+                (object) ['allOf' => [(object) ['required' => ['foo']], (object) ['required' => ['bar']]]],
+                (object) ['required' => ['foo', 'bar'], 'properties' => (object) []]
             ],
             'properties' => [
-                ['allOf' => [
-                    ['properties' => ['foo' => ['type' => 'int']]],
-                    ['properties' => ['bar' => ['type' => 'date-time']]]
+                (object) ['allOf' => [
+                    (object) ['properties' => (object) ['foo' => (object) ['type' => 'int']]],
+                    (object) ['properties' => (object) ['bar' => (object) ['type' => 'date-time']]]
                 ]],
-                ['required' => [], 'properties' => ['foo' => ['type' => 'int'], 'bar' => ['type' => 'date-time']]]
+                (object) ['required' => [], 'properties' => (object) ['foo' => (object) ['type' => 'int'], 'bar' => (object) ['type' => 'date-time']]]
             ],
             'oneOf inside' => [
-                ['allOf' => [
-                    ['oneOf' => [
-                        ['required' => ['foo'], 'properties' => ['foo' => ['type' => 'int']]],
-                        ['required' => ['bar', 'foo'], 'properties' => ['bar' => ['type' => 'date-time'], 'foo' => ['type' => 'string']]]
+                (object) ['allOf' => [
+                    (object) ['oneOf' => [
+                        (object) ['required' => ['foo'], 'properties' => (object) ['foo' => (object) ['type' => 'int']]],
+                        (object) ['required' => ['bar', 'foo'], 'properties' => (object) ['bar' => (object) ['type' => 'date-time'], 'foo' => (object) ['type' => 'string']]]
                     ]]
                 ]],
-                ['required' => ['foo'], 'properties' => ['bar' => ['type' => 'date-time'], 'foo' => ['type' => 'string']]]
+                (object) ['required' => ['foo'], 'properties' => (object) ['bar' => (object) ['type' => 'date-time'], 'foo' => (object) ['type' => 'string']]]
             ],
             'anyOf inside' => [
-                ['allOf' => [
-                    ['anyOf' => [
-                        ['required' => ['foo'], 'properties' => ['foo' => ['type' => 'int']]],
-                        ['required' => ['bar'], 'properties' => ['bar' => ['type' => 'date-time']]]
+                (object) ['allOf' => [
+                    (object) ['anyOf' => [
+                        (object) ['required' => ['foo'], 'properties' => (object) ['foo' => (object) ['type' => 'int']]],
+                        (object) ['required' => ['bar'], 'properties' => (object) ['bar' => (object) ['type' => 'date-time']]]
                     ]]
                 ]],
-                ['required' => [], 'properties' => ['bar' => ['type' => 'date-time'], 'foo' => ['type' => 'int']]]
+                (object) ['required' => [], 'properties' => (object) ['bar' => (object) ['type' => 'date-time'], 'foo' => (object) ['type' => 'int']]]
             ],
         ];
     }

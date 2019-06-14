@@ -18,20 +18,20 @@ class ArrayPropertyTest extends TestCase
 
     public function testCanHandleSchema()
     {
-        assertTrue(ArrayProperty::canHandleSchema(['type' => 'array']));
-        assertFalse(ArrayProperty::canHandleSchema(['type' => 'foo']));
+        assertTrue(ArrayProperty::canHandleSchema((object) ['type' => 'array']));
+        assertFalse(ArrayProperty::canHandleSchema((object) ['type' => 'foo']));
     }
 
     protected function setUp()
     {
         $this->generatorRequest = $this->prophesize(GeneratorRequest::class);
         $key = 'myPropertyName';
-        $this->underTest = new ArrayProperty($key, ['type' => 'integer'], $this->generatorRequest->reveal());
+        $this->underTest = new ArrayProperty($key, (object) ['type' => 'integer'], $this->generatorRequest->reveal());
     }
 
     public function testConvertJsonToTypeWithSimpleArray()
     {
-        $underTest = new ArrayProperty('myPropertyName', ['type' => 'array'], $this->generatorRequest->reveal());
+        $underTest = new ArrayProperty('myPropertyName', (object) ['type' => 'array'], $this->generatorRequest->reveal());
 
         assertFalse($underTest->isComplex());
 
@@ -48,7 +48,7 @@ EOCODE;
     {
         $this->generatorRequest->getTargetClass()->willReturn('Foo');
 
-        $underTest = new ArrayProperty('myPropertyName', ['type' => 'array', 'items' => ['properties' => []]], $this->generatorRequest->reveal());
+        $underTest = new ArrayProperty('myPropertyName', (object) ['type' => 'array', 'items' => (object) ['properties' => []]], $this->generatorRequest->reveal());
 
         assertTrue($underTest->isComplex());
 
@@ -67,7 +67,7 @@ EOCODE;
         $ctx->request = new \stdClass();
         $ctx->request->targetClass = 'Foo';
 
-        $underTest = new ArrayProperty('myPropertyName', ['type' => 'array'], $ctx);
+        $underTest = new ArrayProperty('myPropertyName', (object) ['type' => 'array'], $ctx);
 
         $result = $underTest->convertTypeToJSON('variable');
 
@@ -82,7 +82,7 @@ EOCODE;
     {
         $this->generatorRequest->getTargetClass()->willReturn('Foo');
 
-        $underTest = new ArrayProperty('myPropertyName', ['type' => 'array', 'items' => ['properties' => []]], $this->generatorRequest->reveal());
+        $underTest = new ArrayProperty('myPropertyName', (object) ['type' => 'array', 'items' => (object) ['properties' => []]], $this->generatorRequest->reveal());
 
         $result = $underTest->convertTypeToJSON('variable');
 
@@ -99,7 +99,7 @@ EOCODE;
         $ctx->request = new \stdClass();
         $ctx->request->targetClass = 'Foo';
 
-        $underTest = new ArrayProperty('myPropertyName', ['type' => 'array'], $ctx);
+        $underTest = new ArrayProperty('myPropertyName', (object) ['type' => 'array'], $ctx);
 
         $expected = <<<'EOCODE'
 $this->myPropertyName = clone $this->myPropertyName;
@@ -111,7 +111,7 @@ EOCODE;
     {
         $this->generatorRequest->getTargetClass()->willReturn('Foo');
 
-        $underTest = new ArrayProperty('myPropertyName', ['type' => 'array', 'items' => ['properties' => []]], $this->generatorRequest->reveal());
+        $underTest = new ArrayProperty('myPropertyName', (object) ['type' => 'array', 'items' => (object) ['properties' => []]], $this->generatorRequest->reveal());
 
         $expected = <<<'EOCODE'
 $this->myPropertyName = array_map(function(FooMyPropertyNameItem $i) { return clone $i; }, $this->myPropertyName);
@@ -132,7 +132,7 @@ EOCODE;
         $ctx->request = new \stdClass();
         $ctx->request->targetClass = 'Foo';
 
-        $underTest = new ArrayProperty('myPropertyName', ['type' => 'array', 'items' => ['type' => 'string']], $ctx);
+        $underTest = new ArrayProperty('myPropertyName', (object) ['type' => 'array', 'items' => (object) ['type' => 'string']], $ctx);
 
         assertSame('string[]', $underTest->typeAnnotation());
         assertSame('array', $underTest->typeHint(7));
@@ -144,7 +144,7 @@ EOCODE;
     {
         $this->generatorRequest->getTargetClass()->willReturn('Foo');
 
-        $underTest = new ArrayProperty('myPropertyName', ['type' => 'array', 'items' => ['properties' => []]], $this->generatorRequest->reveal());
+        $underTest = new ArrayProperty('myPropertyName', (object) ['type' => 'array', 'items' => (object) ['properties' => []]], $this->generatorRequest->reveal());
 
         assertSame('FooMyPropertyNameItem[]', $underTest->typeAnnotation());
         assertSame('array', $underTest->typeHint(7));
@@ -163,12 +163,12 @@ EOCODE;
 
     public function testGenerateSubTypesWithComplexArray()
     {
-        $arrayProperties = ['properties' => []];
+        $arrayProperties = (object) ['properties' => []];
         $this->generatorRequest->withSchema($arrayProperties)->willReturn($this->generatorRequest->reveal());
         $this->generatorRequest->withClass('MyPropertyNameItem')->willReturn($this->generatorRequest->reveal());
         $this->generatorRequest->getTargetClass()->willReturn('');
 
-        $underTest = new ArrayProperty('myPropertyName', ['type' => 'array', 'items' => $arrayProperties], $this->generatorRequest->reveal());
+        $underTest = new ArrayProperty('myPropertyName', (object) ['type' => 'array', 'items' => $arrayProperties], $this->generatorRequest->reveal());
 
         $schemaToClass = $this->prophesize(SchemaToClass::class);
 

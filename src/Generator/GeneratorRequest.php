@@ -4,7 +4,7 @@ namespace Helmich\Schema2Class\Generator;
 
 class GeneratorRequest
 {
-    /** @var array */
+    /** @var object|mixed */
     private $schema;
 
     /** @var string */
@@ -22,7 +22,7 @@ class GeneratorRequest
 
     /**
      * GeneratorRequest constructor.
-     * @param array $schema
+     * @param object|mixed $schema
      * @param string $targetDirectory
      * @param string $targetNamespace
      * @param string $targetClass
@@ -35,7 +35,11 @@ class GeneratorRequest
         $this->targetClass = $targetClass;
     }
 
-    public function withSchema(array $schema)
+    /**
+     * @param object|mixed $schema
+     * @return GeneratorRequest
+     */
+    public function withSchema($schema)
     {
         $clone = clone $this;
         $clone->schema = $schema;

@@ -17,17 +17,17 @@ class NestedObjectPropertyTest extends TestCase
 
     public function testCanHandleSchema()
     {
-        assertTrue(NestedObjectProperty::canHandleSchema(['type' => 'object']));
-        assertTrue(NestedObjectProperty::canHandleSchema(['properties' => []]));
-        assertFalse(NestedObjectProperty::canHandleSchema(['type' => 'foo']));
-        assertFalse(NestedObjectProperty::canHandleSchema([]));
+        assertTrue(NestedObjectProperty::canHandleSchema((object) ['type' => 'object']));
+        assertTrue(NestedObjectProperty::canHandleSchema((object) ['properties' => (object) []]));
+        assertFalse(NestedObjectProperty::canHandleSchema((object) ['type' => 'foo']));
+        assertFalse(NestedObjectProperty::canHandleSchema((object) []));
     }
 
     protected function setUp()
     {
         $this->generatorRequest = $this->prophesize(GeneratorRequest::class);
         $key = 'myPropertyName';
-        $this->underTest = new NestedObjectProperty($key, ['allOf' => []], $this->generatorRequest->reveal());
+        $this->underTest = new NestedObjectProperty($key, (object) ['allOf' => (object) []], $this->generatorRequest->reveal());
     }
 
     public function testIsComplex()
@@ -39,7 +39,7 @@ class NestedObjectPropertyTest extends TestCase
     {
         $this->generatorRequest->getTargetClass()->willReturn('Foo');
 
-        $underTest = new NestedObjectProperty('myPropertyName', ['allOf' => []], $this->generatorRequest->reveal());
+        $underTest = new NestedObjectProperty('myPropertyName', (object) ['allOf' => (object) []], $this->generatorRequest->reveal());
 
         $result = $underTest->convertJSONToType('variable');
 
@@ -74,7 +74,7 @@ EOCODE;
         $this->generatorRequest->getTargetClass()->willReturn('Foo');
         $this->generatorRequest->getTargetNamespace()->willReturn('BarNs');
 
-        $underTest = new NestedObjectProperty('myPropertyName',  ['allOf' => []], $this->generatorRequest->reveal());
+        $underTest = new NestedObjectProperty('myPropertyName',  (object) ['allOf' => (object) []], $this->generatorRequest->reveal());
 
         assertSame('FooMyPropertyName', $underTest->typeAnnotation());
         assertSame('\\BarNs\\FooMyPropertyName', $underTest->typeHint(7));
@@ -83,7 +83,7 @@ EOCODE;
 
     public function testGenerateSubTypesWithSimpleArray()
     {
-        $this->generatorRequest->withSchema(['allOf' => []])->willReturn($this->generatorRequest->reveal());
+        $this->generatorRequest->withSchema((object) ['allOf' => (object) []])->willReturn($this->generatorRequest->reveal());
         $this->generatorRequest->withClass('MyPropertyName')->willReturn($this->generatorRequest->reveal());
         $this->generatorRequest->getTargetClass()->willReturn('');
 

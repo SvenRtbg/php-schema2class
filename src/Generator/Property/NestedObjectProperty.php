@@ -5,12 +5,10 @@ use Helmich\Schema2Class\Generator\SchemaToClass;
 
 class NestedObjectProperty extends AbstractPropertyInterface
 {
-    use TypeConvert;
-
-    public static function canHandleSchema(array $schema)
+    public static function canHandleSchema($schema)
     {
-        return isset($schema["type"]) && $schema["type"] === "object"
-            || isset($schema["properties"]);
+        return isset($schema->type) && $schema->type === "object"
+            || isset($schema->properties);
     }
 
     public function isComplex()

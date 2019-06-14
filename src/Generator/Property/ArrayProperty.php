@@ -5,11 +5,9 @@ use Helmich\Schema2Class\Generator\SchemaToClass;
 
 class ArrayProperty extends AbstractPropertyInterface
 {
-    use TypeConvert;
-
-    public static function canHandleSchema(array $schema)
+    public static function canHandleSchema($schema)
     {
-        return isset($schema["type"]) && $schema["type"] === "array";
+        return isset($schema->type) && $schema->type === "array";
     }
 
     public function isComplex()
@@ -63,7 +61,7 @@ class ArrayProperty extends AbstractPropertyInterface
 
         if ($this->isObjectArray()) {
             $generator->schemaToClass(
-                $this->generatorRequest->withSchema($def["items"])->withClass($this->subTypeName())
+                $this->generatorRequest->withSchema($def->items)->withClass($this->subTypeName())
             );
         }
     }
@@ -74,8 +72,8 @@ class ArrayProperty extends AbstractPropertyInterface
             return $this->subTypeName() . "[]";
         }
 
-        if (isset($this->schema["items"])) {
-            list ($annot, $hint) = $this->phpPrimitiveForSchemaType($this->schema["items"]);
+        if (isset($this->schema->items)) {
+            list ($annot, $hint) = $this->phpPrimitiveForSchemaType($this->schema->items);
             return $annot . "[]";
         }
 
@@ -95,8 +93,8 @@ class ArrayProperty extends AbstractPropertyInterface
     private function isObjectArray()
     {
         return
-            (isset($this->schema["items"]["type"]) && $this->schema["items"]["type"] === "object")
-            || isset($this->schema["items"]["properties"]);
+            (isset($this->schema->items->type) && $this->schema->items->type === "object")
+            || isset($this->schema->items->properties);
     }
 
 }

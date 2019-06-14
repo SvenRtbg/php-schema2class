@@ -5,11 +5,9 @@ use Helmich\Schema2Class\Generator\SchemaToClass;
 
 class IntersectProperty extends AbstractPropertyInterface
 {
-    use TypeConvert;
-
-    public static function canHandleSchema(array $schema)
+    public static function canHandleSchema($schema)
     {
-        return isset($schema["allOf"]);
+        return isset($schema->allOf);
     }
 
     public function isComplex()
@@ -45,7 +43,7 @@ class IntersectProperty extends AbstractPropertyInterface
     public function generateSubTypes(SchemaToClass $generator)
     {
         $propertyTypeName = $this->subTypeName();
-        $combined = $this->buildSchemaIntersect($this->schema["allOf"]);
+        $combined = $this->buildSchemaIntersect($this->schema->allOf);
 
         $generator->schemaToClass(
             $this->generatorRequest
@@ -71,27 +69,26 @@ class IntersectProperty extends AbstractPropertyInterface
 
     private function buildSchemaUnion(array $schemas)
     {
-        $combined = [
-            "required" => [],
-            "properties" => [],
-        ];
+        $combined = new \stdClass();
+        $combined->required = [];
+        $combined->properties = new \stdClass();
 
         foreach ($schemas as $i => $schema) {
-            $required = isset($schema["required"]) ? $schema["required"] : [];
+            $required = isset($schema->required) ? $schema->required : [];
 
             if ($i === 0) {
-                $combined["required"] = $required;
+                $combined->required = $required;
             } else {
-                foreach ($combined["required"] as $j => $req) {
+                foreach ($combined->required as $j => $req) {
                     if (!in_array($req, $required)) {
-                        unset($combined["required"][$j]);
+                        unset($combined->required[$j]);
                     }
                 }
             }
 
-            if (isset($schema["properties"])) {
-                foreach ($schema["properties"] as $name => $def) {
-                    $combined["properties"][$name] = $def;
+            if (isset($schema->properties)) {
+                foreach ($schema->properties as $name => $def) {
+                    $combined->properties->{$name} = $def;
                 }
             }
         }
@@ -99,34 +96,32 @@ class IntersectProperty extends AbstractPropertyInterface
         return $combined;
     }
 
-    private function buildSchemaIntersect(array $schemas)
+    private function buildSchemaIntersect($schemas)
     {
-        $combined = [
-            "required" => [],
-            "properties" => [],
-        ];
+        $combined = new \stdClass();
+        $combined->required = [];
+        $combined->properties = new \stdClass();
 
         foreach ($schemas as $schema) {
-            if (isset($schema["oneOf"])) {
-                $schema = $this->buildSchemaUnion($schema["oneOf"]);
+            if (isset($schema->oneOf)) {
+                $schema = $this->buildSchemaUnion($schema->oneOf);
             }
 
-            if (isset($schema["anyOf"])) {
-                $schema = $this->buildSchemaUnion($schema["anyOf"]);
+            if (isset($schema->anyOf)) {
+                $schema = $this->buildSchemaUnion($schema->anyOf);
             }
 
-            if (isset($schema["required"])) {
-                $combined["required"] = array_unique(array_merge($combined["required"], $schema["required"]));
+            if (isset($schema->required)) {
+                $combined->required = array_unique(array_merge($combined->required, $schema->required));
             }
 
-            if (isset($schema["properties"])) {
-                foreach ($schema["properties"] as $name => $def) {
-                    $combined["properties"][$name] = $def;
+            if (isset($schema->properties)) {
+                foreach ($schema->properties as $name => $def) {
+                    $combined->properties->{$name} = $def;
                 }
             }
         }
 
         return $combined;
     }
-
 }

@@ -17,8 +17,8 @@ class UnionPropertyTest extends TestCase
 
     public function testCanHandleSchema()
     {
-        assertTrue(UnionProperty::canHandleSchema(['anyOf' => []]));
-        assertTrue(UnionProperty::canHandleSchema(['oneOf' => []]));
+        assertTrue(UnionProperty::canHandleSchema((object) ['anyOf' => []]));
+        assertTrue(UnionProperty::canHandleSchema((object) ['oneOf' => []]));
     }
 
 
@@ -26,7 +26,7 @@ class UnionPropertyTest extends TestCase
     {
         $this->generatorRequest = $this->prophesize(GeneratorRequest::class);
         $key = 'myPropertyName';
-        $this->underTest = new UnionProperty($key, ['anyOf' => [['properties' => ['subFoo1' => ['type' => 'string']]], ['properties' => ['subFoo2' => ['type' => 'string']]]]], $this->generatorRequest->reveal());
+        $this->underTest = new UnionProperty($key, (object) ['anyOf' => [(object) ['properties' => (object) ['subFoo1' => (object) ['type' => 'string']]], (object) ['properties' => (object) ['subFoo2' => (object) ['type' => 'string']]]]], $this->generatorRequest->reveal());
     }
 
     public function testIsComplex()
@@ -38,7 +38,7 @@ class UnionPropertyTest extends TestCase
     {
         $this->generatorRequest->getTargetClass()->willReturn('Foo');
 
-        $underTest = new UnionProperty('myPropertyName', ['anyOf' => [['properties' => ['subFoo1' => ['type' => 'string']]], ['properties' => ['subFoo2' => ['type' => 'string']]]]], $this->generatorRequest->reveal());
+        $underTest = new UnionProperty('myPropertyName', (object) ['anyOf' => [(object) ['properties' => (object) ['subFoo1' => (object) ['type' => 'string']]], (object) ['properties' => (object) ['subFoo2' => (object) ['type' => 'string']]]]], $this->generatorRequest->reveal());
 
         $result = $underTest->convertJSONToType('variable');
 
@@ -59,7 +59,7 @@ EOCODE;
     {
         $this->generatorRequest->getTargetClass()->willReturn('Foo');
 
-        $underTest = new UnionProperty('myPropertyName', ['anyOf' => [['properties' => ['subFoo1' => ['type' => 'string']]], ['properties' => ['subFoo2' => ['type' => 'string']]]]], $this->generatorRequest->reveal());
+        $underTest = new UnionProperty('myPropertyName', (object) ['anyOf' => [(object) ['properties' => (object) ['subFoo1' => (object) ['type' => 'string']]], (object) ['properties' => (object) ['subFoo2' => (object) ['type' => 'string']]]]], $this->generatorRequest->reveal());
 
         $result = $underTest->convertTypeToJSON('variable');
 
@@ -87,7 +87,7 @@ EOCODE;
     {
         $this->generatorRequest->getTargetClass()->willReturn('Foo');
 
-        $underTest = new UnionProperty('myPropertyName', ['anyOf' => [['properties' => ['subFoo1' => ['type' => 'string']]], ['properties' => ['subFoo2' => ['type' => 'string']]]]], $this->generatorRequest->reveal());
+        $underTest = new UnionProperty('myPropertyName', (object) ['anyOf' => [(object) ['properties' => (object) ['subFoo1' => (object) ['type' => 'string']]], (object) ['properties' => (object) ['subFoo2' => (object) ['type' => 'string']]]]], $this->generatorRequest->reveal());
 
         assertSame('FooMyPropertyNameAlternative1|FooMyPropertyNameAlternative2', $underTest->typeAnnotation());
         assertSame(null, $underTest->typeHint(7));
@@ -98,15 +98,15 @@ EOCODE;
     {
         return [
             'oneOf inside' => [
-                ['oneOf' => [
-                    ['required' => ['foo'], 'properties' => ['foo' => ['type' => 'int']]],
-                    ['required' => ['bar', 'foo'], 'properties' => ['bar' => ['type' => 'date-time'], 'foo' => ['type' => 'string']]]
+                (object) ['oneOf' => [
+                    (object) ['required' => ['foo'], 'properties' => (object) ['foo' => (object) ['type' => 'int']]],
+                    (object) ['required' => ['bar', 'foo'], 'properties' => (object) ['bar' => (object) ['type' => 'date-time'], 'foo' => (object) ['type' => 'string']]]
                 ]],
             ],
             'anyOf inside' => [
-                ['anyOf' => [
-                    ['required' => ['foo'], 'properties' => ['foo' => ['type' => 'int']]],
-                    ['required' => ['bar'], 'properties' => ['bar' => ['type' => 'date-time']]]
+                (object) ['anyOf' => [
+                    (object) ['required' => ['foo'], 'properties' => (object) ['foo' => (object) ['type' => 'int']]],
+                    (object) ['required' => ['bar'], 'properties' => (object) ['bar' => (object) ['type' => 'date-time']]]
                 ]],
             ],
         ];
@@ -117,10 +117,10 @@ EOCODE;
      */
     public function testGenerateSubTypes($schema)
     {
-        if (isset($schema['oneOf'])) {
-            $subschemas = $schema['oneOf'];
-        } elseif (isset($schema['anyOf'])) {
-            $subschemas = $schema['anyOf'];
+        if (isset($schema->oneOf)) {
+            $subschemas = $schema->oneOf;
+        } elseif (isset($schema->anyOf)) {
+            $subschemas = $schema->anyOf;
         }
 
         $this->generatorRequest->getTargetClass()->willReturn('');

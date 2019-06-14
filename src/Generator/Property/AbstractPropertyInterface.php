@@ -10,7 +10,7 @@ abstract class AbstractPropertyInterface implements PropertyInterface
     /** @var string */
     protected $key;
 
-    /** @var array */
+    /** @var object */
     protected $schema;
 
     /** @var string */
@@ -19,7 +19,7 @@ abstract class AbstractPropertyInterface implements PropertyInterface
     /** @var GeneratorRequest */
     protected $generatorRequest;
 
-    public function __construct($key, array $schema, GeneratorRequest $generatorRequest)
+    public function __construct($key, $schema, GeneratorRequest $generatorRequest)
     {
         $this->key = $key;
         $this->schema = $schema;
@@ -68,4 +68,30 @@ abstract class AbstractPropertyInterface implements PropertyInterface
     {
     }
 
+    /**
+     * @param object $def
+     * @return array
+     */
+    protected function phpPrimitiveForSchemaType($def)
+    {
+        $t = isset($def->type) ? $def->type : "any";
+
+        if ($t === "string") {
+            if (isset($def->format) && $def->format == "date-time") {
+                return ["\\DateTime", "\\DateTime"];
+            }
+
+            return ["string", "string"];
+        } else if ($t === "integer" || $t === "int") {
+            return ["int", "int"];
+        } else if ($t === "number") {
+            if (isset($def->format) && $def->format === "integer") {
+                return ["int", "int"];
+            }
+
+            return ["float", "float"];
+        }
+
+        return ["mixed", null];
+    }
 }

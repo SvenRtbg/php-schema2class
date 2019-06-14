@@ -3,11 +3,9 @@ namespace Helmich\Schema2Class\Generator\Property;
 
 class StringProperty extends AbstractPropertyInterface
 {
-    use TypeConvert;
-
-    public static function canHandleSchema(array $schema)
+    public static function canHandleSchema($schema)
     {
-        return isset($schema["type"]) && $schema["type"] === "string";
+        return isset($schema->type) && $schema->type === "string";
     }
 
     public function typeAnnotation()

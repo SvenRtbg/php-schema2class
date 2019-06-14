@@ -7,13 +7,13 @@ use Helmich\Schema2Class\Generator\SchemaToClass;
 interface PropertyInterface
 {
     /**
-     * @param array $schema
+     * @param object $schema
      * @return bool
      */
-    public static function canHandleSchema(array $schema);
+    public static function canHandleSchema($schema);
 
     /**
-     * @return array
+     * @return object
      */
     public function schema();
 

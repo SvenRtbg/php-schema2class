@@ -39,12 +39,12 @@ class Generator
             $schema = $property->schema();
             $prop = new PropertyGenerator(
                 $property->key(),
-                isset($schema["default"]) ? $schema["default"] : null,
+                isset($schema->default) ? $schema->default : null,
                 PropertyGenerator::FLAG_PRIVATE
             );
 
             $prop->setDocBlock(new DocBlockGenerator(
-                isset($schema["description"]) ? $schema["description"] : null,
+                isset($schema->description) ? $schema->description : null,
                 null,
                 [new GenericTag("var", $property->typeAnnotation())]
             ));

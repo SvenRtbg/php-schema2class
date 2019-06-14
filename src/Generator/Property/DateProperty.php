@@ -3,14 +3,12 @@ namespace Helmich\Schema2Class\Generator\Property;
 
 class DateProperty extends AbstractPropertyInterface
 {
-    use TypeConvert;
-
-    public static function canHandleSchema(array $schema)
+    public static function canHandleSchema($schema)
     {
-        return isset($schema["type"])
-            && isset($schema["format"])
-            && $schema["type"] === "string"
-            && $schema["format"] === "date-time";
+        return isset($schema->type)
+            && isset($schema->format)
+            && $schema->type === "string"
+            && $schema->format === "date-time";
     }
 
     public function isComplex()

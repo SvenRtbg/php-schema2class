@@ -20,21 +20,21 @@ class IntegerPropertyTest extends TestCase
 
     public function testCanHandleSchema()
     {
-        assertTrue(IntegerProperty::canHandleSchema(['type' => 'int']));
-        assertTrue(IntegerProperty::canHandleSchema(['type' => 'integer']));
-        assertTrue(IntegerProperty::canHandleSchema(['type' => 'number', 'format' => 'int']));
-        assertTrue(IntegerProperty::canHandleSchema(['type' => 'number', 'format' => 'integer']));
+        assertTrue(IntegerProperty::canHandleSchema((object) ['type' => 'int']));
+        assertTrue(IntegerProperty::canHandleSchema((object) ['type' => 'integer']));
+        assertTrue(IntegerProperty::canHandleSchema((object) ['type' => 'number', 'format' => 'int']));
+        assertTrue(IntegerProperty::canHandleSchema((object) ['type' => 'number', 'format' => 'integer']));
 
-        assertFalse(IntegerProperty::canHandleSchema([]));
-        assertFalse(IntegerProperty::canHandleSchema(['type' => 'foo']));
-        assertFalse(IntegerProperty::canHandleSchema(['type' => 'number', 'format' => 'foo']));
+        assertFalse(IntegerProperty::canHandleSchema((object) []));
+        assertFalse(IntegerProperty::canHandleSchema((object) ['type' => 'foo']));
+        assertFalse(IntegerProperty::canHandleSchema((object) ['type' => 'number', 'format' => 'foo']));
     }
 
     protected function setUp()
     {
         $this->generatorRequest = $this->prophesize(GeneratorRequest::class);
         $key = 'myPropertyName';
-        $this->underTest = new IntegerProperty($key, ['type' => 'integer'], $this->generatorRequest->reveal());
+        $this->underTest = new IntegerProperty($key, (object) ['type' => 'integer'], $this->generatorRequest->reveal());
     }
 
     public function testIsComplex()

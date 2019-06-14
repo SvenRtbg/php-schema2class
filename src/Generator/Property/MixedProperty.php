@@ -3,9 +3,7 @@ namespace Helmich\Schema2Class\Generator\Property;
 
 class MixedProperty extends AbstractPropertyInterface
 {
-    use TypeConvert;
-
-    public static function canHandleSchema(array $schema)
+    public static function canHandleSchema($schema)
     {
         return true;
     }

@@ -13,6 +13,7 @@ use Helmich\Schema2Class\Generator\Property\PropertyCollection;
 use Helmich\Schema2Class\Generator\Property\StringProperty;
 use Helmich\Schema2Class\Generator\Property\UnionProperty;
 use Helmich\Schema2Class\Writer\WriterInterface;
+use JsonSchema\SchemaStorage;
 use Symfony\Component\Console\Output\OutputInterface;
 use Zend\Code\Generator\ClassGenerator;
 use Zend\Code\Generator\DocBlock\Tag\GenericTag;
@@ -28,6 +29,9 @@ class SchemaToClass
 
     /** @var OutputInterface */
     private $output;
+
+    /** @var SchemaStorage */
+    private $schemaStorage;
 
     /**
      * @param WriterInterface $writer
@@ -50,6 +54,15 @@ class SchemaToClass
     }
 
     /**
+     * @param SchemaStorage $schemaStorage
+     */
+    public function setSchemaStorage(SchemaStorage $schemaStorage)
+    {
+        $this->schemaStorage = $schemaStorage;
+        return $this;
+    }
+
+    /**
      * @param GeneratorRequest $generatorRequest
      * @param OutputInterface  $output
      * @throws GeneratorException
@@ -65,7 +78,8 @@ class SchemaToClass
         }
 
         $schema = $generatorRequest->getSchema();
-        $schemaProperty = new PropertyGenerator("schema", $schema, PropertyGenerator::FLAG_PRIVATE | PropertyGenerator::FLAG_STATIC);
+        $schema = $this->schemaStorage->resolveRefSchema($schema);
+        $schemaProperty = new PropertyGenerator("schema", $this->objectToArray($schema), PropertyGenerator::FLAG_PRIVATE | PropertyGenerator::FLAG_STATIC);
         $schemaProperty->setDocBlock(new DocBlockGenerator(
             "Schema used to validate input for creating instances of this class",
             null,
@@ -75,7 +89,7 @@ class SchemaToClass
         $properties = [$schemaProperty];
         $methods = [];
 
-        if (!isset($schema["properties"])) {
+        if (!isset($schema->properties)) {
             throw new GeneratorException("cannot generate class for types other than 'object'");
         }
 
@@ -92,8 +106,8 @@ class SchemaToClass
         ];
 
         // @todo references have to be resolved at this point
-        foreach ($schema["properties"] as $key => $definition) {
-            $isRequired = isset($schema["required"]) && in_array($key, $schema["required"]);
+        foreach ($schema->properties as $key => $definition) {
+            $isRequired = isset($schema->required) && in_array($key, $schema->required);
 
             foreach ($propertyTypes as $propertyType) {
                 if ($propertyType::canHandleSchema($definition)) {
@@ -152,6 +166,11 @@ class SchemaToClass
         $content = preg_replace('/\\\\'.preg_quote($generatorRequest->getTargetNamespace()).'\\\\/', '', $content);
 
         $this->writer->writeFile($generatorRequest->getTargetDirectory() . '/' . $generatorRequest->getTargetClass() . '.php', $content);
+    }
+
+    private function objectToArray($schema)
+    {
+        return json_decode(json_encode($schema), true);
     }
 
 }

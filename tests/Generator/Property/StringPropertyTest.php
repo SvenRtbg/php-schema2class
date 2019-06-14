@@ -18,16 +18,15 @@ class StringPropertyTest extends TestCase
 
     public function testCanHandleSchema()
     {
-        $stringSchema = ['type' => 'string'];
-        assertTrue(StringProperty::canHandleSchema($stringSchema));
-        assertFalse(StringProperty::canHandleSchema([]));
+        assertTrue(StringProperty::canHandleSchema((object) ['type' => 'string']));
+        assertFalse(StringProperty::canHandleSchema((object) []));
     }
 
     protected function setUp()
     {
         $this->generatorRequest = $this->prophesize(GeneratorRequest::class);
         $key = 'myString';
-        $this->underTest = new StringProperty($key, ['type' => 'string'], $this->generatorRequest->reveal());
+        $this->underTest = new StringProperty($key, (object) ['type' => 'string'], $this->generatorRequest->reveal());
     }
 
     public function testIsComplex()
